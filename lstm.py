@@ -145,9 +145,9 @@ with graph.as_default():
   
   # Parameters: 
   # Single matrix: input, previous output, and bias.
-  ifcox = tf.Variable(tf.truncated_normal([vocabulary_size, 4 * num_nodes], -0.1, 0.1))
-  ifcom = tf.Variable(tf.truncated_normal([num_nodes, 4 * num_nodes], -0.1, 0.1))
-  ifcob = tf.Variable(tf.zeros([1, 4 * num_nodes]))
+  xm = tf.Variable(tf.truncated_normal([vocabulary_size, 4 * num_nodes], -0.1, 0.1))
+  om = tf.Variable(tf.truncated_normal([num_nodes, 4 * num_nodes], -0.1, 0.1))
+  bm = tf.Variable(tf.zeros([1, 4 * num_nodes]))
   # Variables saving state across unrollings.
   saved_output = tf.Variable(tf.zeros([batch_size, num_nodes]), trainable=False)
   saved_state = tf.Variable(tf.zeros([batch_size, num_nodes]), trainable=False)
@@ -160,7 +160,7 @@ with graph.as_default():
     """Create a LSTM cell. See e.g.: http://arxiv.org/pdf/1402.1128v1.pdf
     Note that in this formulation, we omit the various connections between the
     previous state and the gates."""
-    all_gates_state = tf.matmul(i, ifcox) + tf.matmul(o, ifcom) + ifcob
+    all_gates_state = tf.matmul(i, xm) + tf.matmul(o, om) + bm
     input_gate = tf.sigmoid(all_gates_state[:, 0:num_nodes])
     forget_gate = tf.sigmoid(all_gates_state[:, num_nodes: 2 * num_nodes])
     update = all_gates_state[:, 2 * num_nodes: 3 * num_nodes]
